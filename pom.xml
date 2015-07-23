@@ -2,7 +2,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>network.ethereal</groupId>
   <artifactId>eMessage</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <build>
       <plugins>
           <plugin>
@@ -35,4 +34,5 @@
 		            <version>1.8.7-R0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
+   <version>- 0.1</version>
 </project>
