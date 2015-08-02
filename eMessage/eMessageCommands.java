@@ -1,5 +1,7 @@
 package network.ethereal.eMessage;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -10,55 +12,73 @@ import io.puharesource.mc.titlemanager.api.ActionbarTitleObject; // Import from 
 
 public class eMessageCommands implements CommandExecutor {
 	
-	// Initialize plugin variable
+	// Initialize plugin variable.
 	private JavaPlugin plugin = null;
 	
-	 // Variable used to change between messages
-	private int msg = 1;
+	 // Variable used to store messages.
+	private List<String> messages;
 	
-	// Constructor sets the plugin variable to eMessage
-	public eMessageCommands(JavaPlugin p){plugin = p;}
+	// Variable to get time delay between messages.
+	private int timeDelay = 0;
+	
+	// Variable to store number of messages.
+	private int msgAmount = 0;
+	
+	 // Variable used to change between messages.
+	private int msg = 0;
+	
+	// Variable to start and cancel the repeating task for advertisements.
+	private int ads = 0;
+	
+	// Constructor sets the plugin variable to eMessage and gets the messages from the configuration file.
+	public eMessageCommands(JavaPlugin p){
+		plugin = p;
+		timeDelay = plugin.getConfig().getInt("TimeDelayBetweenMessages");
+		messages = plugin.getConfig().getStringList("Messages");
+		msgAmount = messages.size();
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] extras) {
 		if (label.equalsIgnoreCase("emsg")){
 			if(extras.length <= 0){
-				// /emsg creates a recurring advertisement. The text of the advertisement is based on the variable msg.
-				 Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+				// /emsg creates a recurring advertisement. The text of the advertisements are found in the configuration file.
+				 ads = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 		            @Override
 		            public void run() {
-		            	if(msg == 1)
-		            	{
-		            		new ActionbarTitleObject(ChatColor.GREEN + "Visit us at: www.ethereal.network").broadcast();
-		            		msg = 2;
-		            	}
-		            	else if(msg == 2)
-		            	{
-		            		new ActionbarTitleObject(ChatColor.GREEN + "TeamSpeak IP: ethereal.network").broadcast();
-		            		msg = 3;
-		            	}
-		            	else if(msg == 3)
-		            	{
-		            		new ActionbarTitleObject(ChatColor.GREEN + "Splatoon - ethereal.network:4444").broadcast();
-		            		msg = 1;
-		            	}
+		            	// Restarts the messages.
+		            	if(msg >= msgAmount)
+		            		msg = 0;
+		            	
+		            	// Plays messages with TitleManager plugin.
+		            	if(eMessage.hasTM)
+		            		new ActionbarTitleObject(ChatColor.GREEN + messages.get(msg)).broadcast();
+		            	// Plays messages with /say <message>
+		            	else
+		            		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "say " + messages.get(msg));
+		            	
+		            	msg++;
 			            		
 			        }
-			     }, 0L, 375L); // 375 = Number of in-game ticks before next message appears.
+			     }, 0L, (20 * timeDelay)); // Number of seconds before next message appears.
 				 return true;
 			}
 			// Reload command /emsg reload
 			else if(extras.length == 1 && extras[0].equalsIgnoreCase("reload")) {
 				try{
-				 Bukkit.getServer().getPluginManager().disablePlugin(plugin);
-				 Bukkit.getServer().getPluginManager().enablePlugin(plugin);
-				 sender.sendMessage(ChatColor.GREEN + "eMessage has been reloaded!");
-				}catch(Exception e){sender.sendMessage("Error: " + e); return false;} // Fails to reload.
+					plugin.reloadConfig();
+					timeDelay = plugin.getConfig().getInt("TimeDelayBetweenMessages");
+					messages = plugin.getConfig().getStringList("Messages");
+					msgAmount = messages.size();
+					Bukkit.getScheduler().cancelTask(ads);
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "emsg");
+					sender.sendMessage(ChatColor.GREEN + "eMessage's configuration has been reloaded!");					
+				}catch(Exception e){sender.sendMessage(ChatColor.RED + "Error: " + e); return false;} // Fails to reload.
 				return true;
 			}
 			// If anything besides "/emsg" OR "/emsg reload" is entered.
 			else if(extras.length > 1 || !extras[0].equalsIgnoreCase("reload"))
-				sender.sendMessage(ChatColor.RED + "Incorrect arguments!");
+				sender.sendMessage(ChatColor.RED + "Invalid arguments!");
 		}
 		return false;
 	}

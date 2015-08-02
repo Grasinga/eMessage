@@ -1,0 +1,7 @@
+# Put the time delay between messages (in seconds) after 'TimeDelayBetweenMessages'.
+# Default is 1 minute.
+# Type messages to be advertised under 'Messages'.
+TimeDelayBetweenMessages: 60
+Messages:
+- "Visit us at: www.ethereal.network"
+- "TeamSpeak IP: ethereal.network"

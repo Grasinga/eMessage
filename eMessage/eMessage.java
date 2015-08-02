@@ -1,17 +1,24 @@
 package network.ethereal.eMessage;
 
-import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 // Main class
 public class eMessage extends JavaPlugin
 {
-	Logger log = Logger.getLogger("Minecraft");
+	// Variable to keep track of whether to use TitleManager or to use /say.
+	public static boolean hasTM = false;
 	
 	public void onEnable() {
-		this.log.info("eMessage Enabled!");
+		
+		getLogger().info("Enabled!");
+		
+		// Checks to see if the server has the TitleManager plugin.
+		checkForTM();
+		
+		// Configuration file
+		getConfig().options().copyDefaults(true);
+		saveConfig();
 		
 		// Allows the use of the /emsg command and passes in eMessage
 		getCommand("emsg").setExecutor(new eMessageCommands(this));
@@ -21,6 +28,18 @@ public class eMessage extends JavaPlugin
 	}   
 	
 	public void onDisable() {
-		this.log.info("eMessage Disabled!");
+		getLogger().info("Disabled!");
 	}
+	
+	private void checkForTM(){
+		if (getServer().getPluginManager().getPlugin("TitleManager") != null && getServer().getPluginManager().getPlugin("TitleManager").isEnabled()){
+			hasTM = true;
+			getLogger().info("Successfully hooked into TitleManager!");
+		}
+		else {
+			hasTM = false;
+			getLogger().warning("Failed to hook into TitleManager, using /say instead!");
+		}
+	}
+	
 }
