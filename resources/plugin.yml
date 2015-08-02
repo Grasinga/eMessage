@@ -5,6 +5,6 @@ description: >
              Messaging System for Ethereal Network
 commands:
   emsg:
-    description: Basic command.
+    description: Commands for starting, adding, removing, and reloading.
     permission: eMessage.emsg
     permission-message: You don't have permission to use that.
