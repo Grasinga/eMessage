@@ -62,7 +62,7 @@ public class eMessageCommands implements CommandExecutor {
 		            		msg = 0;
 		            	
 		            	// Plays messages with TitleManager plugin.
-		            	if(eMessage.hasTM)
+		            	if(eCheck.hasTM)
 		            		new ActionbarTitleObject(ChatColor.GREEN + messages.get(msg)).broadcast();
 		            	// Plays messages with /say <message>
 		            	else
