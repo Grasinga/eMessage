@@ -61,14 +61,17 @@ public class eMessageCommands implements CommandExecutor {
 		            	if(msg >= msgAmount)
 		            		msg = 0;
 		            	
-		            	// Plays messages with TitleManager plugin.
-		            	if(eCheck.hasTM)
-		            		new ActionbarTitleObject(ChatColor.GREEN + messages.get(msg)).broadcast();
-		            	// Plays messages with /say <message>
-		            	else
-		            		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "say " + messages.get(msg));
-		            	
-		            	msg++;
+		            	// Handles if there is no messages.
+		            	if(msgAmount != 0){
+			            	// Plays messages with TitleManager plugin.
+			            	if(eCheck.hasTM)
+			            		new ActionbarTitleObject(ChatColor.GREEN + messages.get(msg)).broadcast();
+			            	// Plays messages with /say <message>
+			            	else
+			            		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "say " + messages.get(msg));
+			            	
+			            	msg++;
+		            	}
 			            		
 			        }
 			     }, 0L, (20 * timeDelay)); // Number of seconds before next message appears.

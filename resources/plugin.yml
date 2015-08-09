@@ -1,6 +1,6 @@
 name: eMessage
 main: network.ethereal.eMessage.eMessage
-version: 1.0
+version: 1.2
 description: >
              Messaging System for Ethereal Network
 commands:
